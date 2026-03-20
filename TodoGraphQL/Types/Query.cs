@@ -1,11 +1,14 @@
 using HotChocolate.Authorization;
 using TodoGraphQL.Models;
+using TodoGraphQL.Services;
 
 namespace TodoGraphQL.Types;
 
 public class Query
 {
-    [Authorize] // ← só funciona com token válido
-    public IEnumerable<Todo> GetTodos([Service] TodoRepository repo)
-        => repo.GetAll();
+    [Authorize]
+    public IQueryable<Todo> GetTodos(
+        [Service] TodoRepository repo,
+        [Service] UserContext userContext)
+        => repo.GetAll(userContext.GetUserId());
 }

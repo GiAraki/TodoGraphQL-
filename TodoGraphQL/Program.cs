@@ -15,6 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+    // Adicione antes dos repositórios
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<UserContext>();
+
 // Repositórios
 builder.Services.AddScoped<TodoRepository>();
 builder.Services.AddScoped<UserRepository>();
