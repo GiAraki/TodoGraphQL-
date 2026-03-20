@@ -1,10 +1,11 @@
+using HotChocolate.Authorization;
 using TodoGraphQL.Models;
 
 namespace TodoGraphQL.Types;
 
 public class Query
 {
-    // Quando alguém pedir "todos", retorna a lista completa
+    [Authorize] // ← só funciona com token válido
     public IEnumerable<Todo> GetTodos([Service] TodoRepository repo)
         => repo.GetAll();
 }

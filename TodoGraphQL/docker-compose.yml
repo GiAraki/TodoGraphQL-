@@ -6,14 +6,14 @@ services:
     ports:
       - "5000:8080"
     environment:
-      - ConnectionStrings__Default=Host=db;Database=graphqldb;Username=postgres;Password=secret
+      - ConnectionStrings__Default=Host=db;Database=tododb;Username=postgres;Password=secret
     depends_on:
       - db
 
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: graphqldb
+      POSTGRES_DB: tododb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
     ports:
