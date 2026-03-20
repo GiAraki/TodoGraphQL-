@@ -9,13 +9,22 @@ using TodoGraphQL.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // ← endereço do Next.js
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 
 // Banco de dados
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
-    // Adicione antes dos repositórios
+// Adicione antes dos repositórios
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserContext>();
 
@@ -42,6 +51,8 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
         };
+
+
     });
 
 builder.Services.AddAuthorization();
@@ -55,8 +66,11 @@ builder.Services
     .AddAuthorization()
     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true); // ← adicione essa linha
 
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+
 var app = builder.Build();
 
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
