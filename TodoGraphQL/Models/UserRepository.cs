@@ -1,25 +1,26 @@
-using Microsoft.EntityFrameworkCore;
-using TodoGraphQL.Data;
+using MongoDB.Driver;
+using TodoGraphQL.Services;
 
 namespace TodoGraphQL.Models;
 
 public class UserRepository
 {
-    private readonly AppDbContext _db;
+    private readonly MongoDbService _mongo;
 
-    public UserRepository(AppDbContext db)
+    public UserRepository(MongoDbService mongo)
     {
-        _db = db;
+        _mongo = mongo;
     }
 
-    public Task<User?> FindByEmail(string email)
-        => _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+    public async Task<User?> FindByEmail(string email)
+        => await _mongo.Users
+            .Find(u => u.Email == email)
+            .FirstOrDefaultAsync();
 
     public async Task<User> Create(string email, string passwordHash)
     {
         var user = new User { Email = email, PasswordHash = passwordHash };
-        _db.Users.Add(user);
-        await _db.SaveChangesAsync();
+        await _mongo.Users.InsertOneAsync(user);
         return user;
     }
 }

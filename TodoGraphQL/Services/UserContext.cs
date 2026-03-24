@@ -11,8 +11,7 @@ public class UserContext
         _httpContextAccessor = httpContextAccessor;
     }
 
-    // Lê o userId que está dentro do token JWT
-    public int GetUserId()
+    public string GetUserId()
     {
         var claim = _httpContextAccessor.HttpContext?.User
             .FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -20,6 +19,6 @@ public class UserContext
         if (claim == null)
             throw new GraphQLException("Usuário não autenticado.");
 
-        return int.Parse(claim);
+        return claim;
     }
 }

@@ -1,12 +1,15 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace TodoGraphQL.Models;
 
 public class Todo
 {
-    public int Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+
     public string Title { get; set; } = string.Empty;
     public bool IsCompleted { get; set; }
-
-    // Relacionamento com o usuário
-    public int UserId { get; set; }
-    public User User { get; set; } = null!;
+    public string UserId { get; set; } = string.Empty;
 }

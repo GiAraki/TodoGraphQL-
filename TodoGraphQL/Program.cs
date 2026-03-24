@@ -1,41 +1,36 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using TodoGraphQL.Data;
 using TodoGraphQL.Models;
 using TodoGraphQL.Services;
 using TodoGraphQL.Types;
 
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // ← endereço do Next.js
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
+// MongoDB
+builder.Services.AddSingleton<MongoDbService>();
 
-// Banco de dados
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-
-// Adicione antes dos repositórios
+// Serviços
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserContext>();
-
-// Repositórios
 builder.Services.AddScoped<TodoRepository>();
 builder.Services.AddScoped<UserRepository>();
-
-// Serviço de token
 builder.Services.AddScoped<TokenService>();
 
-// Configuração do JWT
+// JWT
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -52,7 +47,19 @@ builder.Services
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
         };
 
-
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"[JWT] Falha: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine($"[JWT] Token validado!");
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -64,9 +71,7 @@ builder.Services
     .AddMutationType<Mutation>()
     .AddTypeExtension<AuthMutation>()
     .AddAuthorization()
-    .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true); // ← adicione essa linha
-
-Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+    .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
 
 var app = builder.Build();
 

@@ -7,8 +7,8 @@ namespace TodoGraphQL.Types;
 public class Query
 {
     [Authorize]
-    public IQueryable<Todo> GetTodos(
+    public async Task<List<Todo>> GetTodos(
         [Service] TodoRepository repo,
         [Service] UserContext userContext)
-        => repo.GetAll(userContext.GetUserId());
+        => await repo.GetAll(userContext.GetUserId());
 }

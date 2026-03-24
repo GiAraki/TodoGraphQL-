@@ -15,14 +15,14 @@ public class Mutation
 
     [Authorize]
     public async Task<Todo> CompleteTodo(
-        int id,
+        string id, // ← string agora
         [Service] TodoRepository repo,
         [Service] UserContext userContext)
         => await repo.Complete(id, userContext.GetUserId());
 
     [Authorize]
     public async Task<bool> DeleteTodo(
-        int id,
+        string id, // ← string agora
         [Service] TodoRepository repo,
         [Service] UserContext userContext)
         => await repo.Delete(id, userContext.GetUserId());

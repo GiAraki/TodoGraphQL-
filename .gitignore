@@ -1,0 +1,39 @@
+# ─── .NET ───────────────────────────────────────
+**/bin/
+**/obj/
+**/out/
+**/.vs/
+**/*.user
+**/publish/
+
+# Configs sensíveis
+**/appsettings.Development.json
+**/appsettings.*.json
+!**/appsettings.json
+
+# Migrations (opcional, remova se quiser versionar)
+**/Migrations/
+
+# ─── Node / Next.js ─────────────────────────────
+**/node_modules/
+**/.next/
+**/out/
+**/.env
+**/.env.local
+**/.env.development
+**/.env.production
+**/.env*.local
+
+# ─── Docker ─────────────────────────────────────
+**/docker-compose.override.yml
+
+# ─── Sistema Operacional ────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDEs ───────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
