@@ -3,8 +3,6 @@ name: CI/CD TodoGraphQL
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -33,3 +31,26 @@ jobs:
           Jwt__Secret: ${{ secrets.JWT_SECRET }}
           Jwt__Issuer: ${{ secrets.JWT_ISSUER }}
           Jwt__Audience: ${{ secrets.JWT_AUDIENCE }}
+
+      # 🔥 LOGIN NO DOCKER HUB
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 🔥 BUILD DA IMAGEM
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-graphql:${{ github.sha }} .
+
+      # 🔥 PUSH DA IMAGEM
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-graphql:${{ github.sha }}
+
+      # 🔥 TAG LATEST (opcional)
+      - name: Tag latest
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/todo-graphql:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/todo-graphql:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/todo-graphql:latest
