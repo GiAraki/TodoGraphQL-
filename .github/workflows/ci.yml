@@ -1,14 +1,13 @@
 name: CI/CD TodoGraphQL
-
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TodoGraphQL # ← aponta para a pasta correta
 
     steps:
       - name: Checkout código
