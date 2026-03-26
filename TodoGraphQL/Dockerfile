@@ -1,16 +1,13 @@
-# build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /app
+WORKDIR /src
 
 COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
+RUN dotnet restore src/TodoGraphQL.API/TodoGraphQL.API.csproj
+RUN dotnet publish src/TodoGraphQL.API/TodoGraphQL.API.csproj -c Release -o /app/publish
 
-# runtime
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
-
-COPY --from=build /app/out .
+COPY --from=build /app/publish .
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "TodoGraphQL.dll"]
+ENTRYPOINT ["dotnet", "TodoGraphQL.API.dll"]

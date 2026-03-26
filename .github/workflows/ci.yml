@@ -7,25 +7,25 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: TodoGraphQL # ← aponta para a pasta correta
+        working-directory: TodoGraphQL
 
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
 
       - name: Configurar .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
       - name: Restaurar dependências
-        run: dotnet restore
+        run: dotnet restore src/TodoGraphQL.API/TodoGraphQL.API.csproj
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build src/TodoGraphQL.API/TodoGraphQL.API.csproj --no-restore --configuration Release
 
       - name: Publicar
-        run: dotnet publish --no-restore --configuration Release -o ./publish
+        run: dotnet publish src/TodoGraphQL.API/TodoGraphQL.API.csproj --no-restore --configuration Release -o ./publish
         env:
           MongoDB__ConnectionString: ${{ secrets.MONGODB_CONNECTION_STRING }}
           MongoDB__DatabaseName: tododb
