@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TodoGraphQL.API.Application;
 using TodoGraphQL.API.GraphQL.Types;
+using TodoGraphQL.Application.UseCases.Admin;
 using TodoGraphQL.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddCors(options =>
 // Camadas
 builder.Services.AddInfrastructure();
 builder.Services.AddApplication();
+builder.Services.AddScoped<UpdateUserRoleUseCase>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -48,6 +50,7 @@ builder.Services
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
     .AddTypeExtension<AuthMutation>()
+    .AddTypeExtension<AdminMutation>()
     .AddAuthorization()
     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
 

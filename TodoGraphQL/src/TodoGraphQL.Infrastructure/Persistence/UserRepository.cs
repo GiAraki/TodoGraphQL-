@@ -21,4 +21,9 @@ public class UserRepository : IUserRepository
         await _context.Users.InsertOneAsync(user);
         return user;
     }
+    public async Task UpdateRoleAsync(string id, UserRole role)
+    {
+        var update = Builders<User>.Update.Set("Role", role);
+        await _context.Users.UpdateOneAsync(u => u.Id == id, update);
+    }
 }

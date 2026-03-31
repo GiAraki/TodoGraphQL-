@@ -1,6 +1,12 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+public enum UserRole
+{
+    User,
+    Admin
+}
+
 public class User
 {
     [BsonId]
@@ -10,16 +16,19 @@ public class User
     public string Email { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
+    public UserRole Role { get; private set; } = UserRole.User;
+
 
     private User() { }
 
-    public static User Create(string email, string passwordHash)
+    public static User Create(string email, string passwordHash,  UserRole role = UserRole.User)
     {
         return new User
         {
             Email = email.Trim().ToLower(),
             PasswordHash = passwordHash,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            Role = role,
         };
     }
 }

@@ -26,6 +26,6 @@ public class LoginUseCase
             throw new DomainException("Senha incorreta.");
 
         var token = _tokenService.GenerateToken(user);
-        return new AuthDto(token, user.Email);
+        return new AuthDto(token, user.Email, user.Role.ToString());
     }
 }

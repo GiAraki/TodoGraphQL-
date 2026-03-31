@@ -23,10 +23,10 @@ public class RegisterUseCase
             throw new DomainException("Email já cadastrado.");
 
         var hash = BCrypt.Net.BCrypt.HashPassword(password);
-        var user = User.Create(email, hash);
+        var user = User.Create(email, hash, UserRole.User);
         var saved = await _userRepository.CreateAsync(user);
         var token = _tokenService.GenerateToken(saved);
 
-        return new AuthDto(token, saved.Email);
+        return new AuthDto(token, saved.Email, saved.Role.ToString());
     }
 }
