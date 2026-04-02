@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Threading.RateLimiting;
 
 namespace TodoGraphQL.API.Middleware;
@@ -5,14 +6,15 @@ namespace TodoGraphQL.API.Middleware;
 public class AuthRateLimitMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<AuthRateLimitMiddleware> _logger;
     private static readonly Dictionary<string, FixedWindowRateLimiter> _limiters = new();
     private static readonly SemaphoreSlim _lock = new(1, 1);
-
     private static readonly string[] AuthOperations = ["Login", "Register"];
 
-    public AuthRateLimitMiddleware(RequestDelegate next)
+    public AuthRateLimitMiddleware(RequestDelegate next, ILogger<AuthRateLimitMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -24,8 +26,7 @@ public class AuthRateLimitMiddleware
             context.Request.Body.Position = 0;
 
             var isAuthOperation = AuthOperations.Any(op =>
-                body.Contains($"\"operationName\":\"{op}\"") ||
-                body.Contains($"operationName: \"{op}\""));
+                body.Contains($"\"operationName\":\"{op}\""));
 
             if (isAuthOperation)
             {
@@ -35,10 +36,14 @@ public class AuthRateLimitMiddleware
 
                 if (!lease.IsAcquired)
                 {
+                    _logger.LogWarning(
+                        "Rate limit atingido para IP: {IpAddress} | Operação: Auth",
+                        ip);
+
                     context.Response.StatusCode = 429;
                     context.Response.ContentType = "application/json";
                     await context.Response.WriteAsync(
-                        """{"errors":[{"message":"Muitas tentativas de login. Aguarde 1 minuto."}]}""");
+                        """{"errors":[{"message":"Muitas tentativas. Aguarde 1 minuto."}]}""");
                     return;
                 }
             }
