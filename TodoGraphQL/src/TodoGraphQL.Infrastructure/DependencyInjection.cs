@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddSingleton<MongoDbContext>();
         services.AddScoped<ITodoRepository, TodoRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IFinanceRepository, FinanceRepository>(); // ← novo
         services.AddScoped<ITokenService, TokenService>();
         return services;
     }

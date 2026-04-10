@@ -11,6 +11,7 @@ using TodoGraphQL.API.GraphQL.Validators;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using TodoGraphQL.API.Middleware;
+using TodoGraphQL.Application.UseCases.Finance;
 
 
 
@@ -63,6 +64,8 @@ try
     builder.Services.AddValidatorsFromAssemblyContaining<AddTodoValidator>();
     builder.Services.AddScoped<GetUsersUseCase>();
     builder.Services.AddScoped<UpdateUserRoleUseCase>();
+    builder.Services.AddScoped<GetFinanceUseCase>();
+    builder.Services.AddScoped<SaveFinanceUseCase>();
 
     builder.Services.AddHttpContextAccessor();
 
@@ -88,10 +91,12 @@ try
     builder.Services
         .AddGraphQLServer()
         .AddQueryType<Query>()
-        .AddTypeExtension<AdminQuery>() 
+        .AddTypeExtension<AdminQuery>()
+        .AddTypeExtension<FinanceQuery>() 
         .AddMutationType<Mutation>()
         .AddTypeExtension<AuthMutation>()
         .AddTypeExtension<AdminMutation>()
+        .AddTypeExtension<FinanceMutation>()
         .AddAuthorization()
         .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
 

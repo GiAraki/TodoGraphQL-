@@ -16,4 +16,6 @@ public class MongoDbContext
 
     public IMongoCollection<Todo> Todos => _database.GetCollection<Todo>("todos");
     public IMongoCollection<User> Users => _database.GetCollection<User>("users");
+    public IMongoCollection<FinanceRecord> Finances => _database.GetCollection<FinanceRecord>("finances"); // ← novo
+
 }
