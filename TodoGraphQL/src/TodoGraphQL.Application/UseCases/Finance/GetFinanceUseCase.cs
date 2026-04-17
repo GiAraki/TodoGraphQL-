@@ -7,15 +7,23 @@ public class GetFinanceUseCase
 {
     private readonly IFinanceRepository _repository;
 
-    public GetFinanceUseCase(IFinanceRepository repository)
+    public GetFinanceUseCase(IFinanceRepository repository) 
     {
         _repository = repository;
     }
 
-    public async Task<FinanceDto?> ExecuteAsync(string userId)
+    // Busca um mês específico
+    public async Task<FinanceDto?> ExecuteAsync(string userId, int month, int year)
     {
-        var record = await _repository.GetByUserIdAsync(userId);
+        var record = await _repository.GetByUserAndMonthAsync(userId, month, year);
         if (record == null) return null;
         return SaveFinanceUseCase.MapToDto(record);
+    }
+
+    // Busca todos os meses para o gráfico
+    public async Task<List<MonthSummaryDto>> GetAllSummariesAsync(string userId)
+    {
+        var records = await _repository.GetAllByUserAsync(userId);
+        return records.Select(SaveFinanceUseCase.ToSummary).ToList();
     }
 }

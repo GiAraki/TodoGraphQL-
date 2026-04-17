@@ -18,6 +18,6 @@ public class FinanceMutation
         var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var fixed_ = input.Fixed.Select(e => new ExpenseInput(e.Id, e.Name, e.Value)).ToList();
         var variable = input.Variable.Select(e => new ExpenseInput(e.Id, e.Name, e.Value)).ToList();
-        return await useCase.ExecuteAsync(userId, input.Salary, fixed_, variable);
+        return await useCase.ExecuteAsync(userId, input.Month, input.Year, input.Salary, fixed_, variable);
     }
 }

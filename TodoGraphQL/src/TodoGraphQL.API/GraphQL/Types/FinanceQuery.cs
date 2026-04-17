@@ -10,10 +10,21 @@ public class FinanceQuery
 {
     [Authorize]
     public async Task<FinanceDto?> GetFinance(
+        int month,
+        int year,
         [Service] GetFinanceUseCase useCase,
         ClaimsPrincipal claimsPrincipal)
     {
         var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        return await useCase.ExecuteAsync(userId);
+        return await useCase.ExecuteAsync(userId, month, year);
+    }
+
+    [Authorize]
+    public async Task<List<MonthSummaryDto>> GetFinanceSummaries(
+        [Service] GetFinanceUseCase useCase,
+        ClaimsPrincipal claimsPrincipal)
+    {
+        var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        return await useCase.GetAllSummariesAsync(userId);
     }
 }
